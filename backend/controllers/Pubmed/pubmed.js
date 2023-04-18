@@ -24,13 +24,9 @@ pubmedRouter.get("/:db", async (req, res) => {
 pubmedRouter.get("/:db/:term", async (req, res) => {
     const db = req.params.db
     let term = req.params.term
-    let retmax = 20
-    if (req.body.retmax) {
-        retmax = req.body.retmax
-    }
     term = term.replaceAll("-", "%20")
     try {
-        const results = await pubmedFunctions.dbSearch(db, term, retmax);
+        const results = await pubmedFunctions.dbSearch(db, term, req.body.retmax, req.body.minDate, req.body.maxDate, req.body.field);
         res.send(results)
     } catch (error) {
         logger.error("Error:", error)

@@ -23,9 +23,10 @@ const getDbInfo = async (db) => {
     }
 }
 
-const dbSearch = async (db, term, retmax) => {
+const dbSearch = async (db, term, retmax = 20, minDate = 1900, maxDate = null, field = "all") => {
+    if (maxDate === null) maxDate = new Date().getFullYear();
     try {
-        const result = await axios.get(`${baseURL}esearch.fcgi?db=${db}&term=${term}&retmax=${retmax}&retmode=json`);
+        const result = await axios.get(`${baseURL}esearch.fcgi?db=${db}&term=${term}[${field}]&retmax=${retmax}&mindate=${minDate}&maxdate=${maxDate}&retmode=json`);
         return result.data.esearchresult;
     }
     catch (error) {
