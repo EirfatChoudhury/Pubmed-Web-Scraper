@@ -4,28 +4,7 @@ const { xml2js } = require("xml-js")
 
 const baseURL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
 
-const getDbList = async () => {
-  try {
-    const result = await axios.get(`${baseURL}einfo.fcgi?retmode=json`);
-    return result.data.einforesult.dblist;
-  } catch (error) {
-    logger.error("Error:", error);
-  }
-};
-
-const getDbInfo = async (db) => {
-  try {
-    const result = await axios.get(
-      `${baseURL}einfo.fcgi?db=${db}&retmode=json`
-    );
-    return result.data.einforesult.dbinfo[0];
-  } catch (error) {
-    logger.error("Error:", error);
-  }
-};
-
 const dbSearchForUIDsByTerm = async (
-  db,
   term,
   minDate = 1900,
   maxDate = null,
@@ -44,7 +23,7 @@ const dbSearchForUIDsByTerm = async (
 
   try {
     const result = await axios.get(
-      `${baseURL}esearch.fcgi?db=${db}&term=${term}[${field}]&mindate=${minDate}&maxdate=${maxDate}&retmode=json&retmax=250`
+      `${baseURL}esearch.fcgi?db=pubmed&term=${term}[${field}]&mindate=${minDate}&maxdate=${maxDate}&retmode=json&retmax=250`
     );
     return result.data.esearchresult.idlist;
   } catch (error) {
@@ -52,29 +31,28 @@ const dbSearchForUIDsByTerm = async (
   }
 };
 
-const getSummariesByUID = async (db, uids) => {
+const getUIDsOfSummariesWithAbstracts = async (uids) => {
     try {
         const result = await axios.get(
-          `${baseURL}esummary.fcgi?db=${db}&id=${uids}&retmode=json`
+          `${baseURL}esummary.fcgi?db=pubmed&id=${uids}&retmode=json`
         );
-        logger.info(`${baseURL}esummary.fcgi?db=${db}&id=${uids}&retmode=json`)
-        return Object.values(result.data.result)
+        return Object.values(result.data.result).pop()
       } catch (error) {
         logger.error("Error:", error);
       }
 }
 
-const getFullRecordsByUID = async (db, uids) => {
+const getFullRecordsByUID = async (uids) => {
     try {
         const result = await axios.get(
-          `${baseURL}efetch.fcgi?db=${db}&id=${uids}&retmode=xml`
+          `${baseURL}efetch.fcgi?db=pubmed&id=${uids}&retmode=xml`
         );
         const jsonObject = xml2js(result.data);
         let pubmedArticles = jsonObject.elements[1].elements
         pubmedArticles = pubmedArticles.map(a => a.elements[0].elements[2].elements)
         pubmedArticles = pubmedArticles.filter(a => a.some(object => object["name"] === "Journal") && a.some(object => object["name"] === "Abstract"))
         pubmedArticles = pubmedArticles.map(a => {
-            const pubDate = a[0].elements[1].elements.filter(element => element.name === "PubDate")[0].elements
+            const pubDate = a[0].elements[1].elements.filter(element => element.name === "PubDate")[0]
             const title = a[0].elements.filter(element => element.name === "Title")[0].elements
             const articleTitle = a.filter(element => element.name === "ArticleTitle")[0].elements
             const abstract = a.filter(element => element.name === "Abstract")[0].elements
@@ -96,9 +74,7 @@ const getFullRecordsByUID = async (db, uids) => {
 }
 
 module.exports = {
-  getDbList,
-  getDbInfo,
   dbSearchForUIDsByTerm,
-  getSummariesByUID,
+  getUIDsOfSummariesWithAbstracts,
   getFullRecordsByUID
 };
