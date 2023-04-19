@@ -1,41 +1,104 @@
-const axios = require('axios');
+const axios = require("axios");
 const logger = require("../../utils/logger");
+const { xml2js } = require("xml-js")
 
-const baseURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+const baseURL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
 
 const getDbList = async () => {
-    try {
-        const result = await axios.get(`${baseURL}einfo.fcgi?retmode=json`);
-        return result.data.einforesult.dblist;
-    }
-    catch (error) {
-        logger.error("Error:", error);
-    }
-}
+  try {
+    const result = await axios.get(`${baseURL}einfo.fcgi?retmode=json`);
+    return result.data.einforesult.dblist;
+  } catch (error) {
+    logger.error("Error:", error);
+  }
+};
 
 const getDbInfo = async (db) => {
+  try {
+    const result = await axios.get(
+      `${baseURL}einfo.fcgi?db=${db}&retmode=json`
+    );
+    return result.data.einforesult.dbinfo[0];
+  } catch (error) {
+    logger.error("Error:", error);
+  }
+};
+
+const dbSearchForUIDsByTerm = async (
+  db,
+  term,
+  minDate = 1900,
+  maxDate = null,
+  field = "all"
+) => {
+  if (
+    maxDate === null ||
+    maxDate > new Date().getFullYear() ||
+    maxDate < 1 ||
+    maxDate < minDate
+  )
+    maxDate = new Date().getFullYear();
+
+  if (minDate < 1 || minDate > maxDate || minDate > new Date().getFullYear())
+    minDate = 1900;
+
+  try {
+    const result = await axios.get(
+      `${baseURL}esearch.fcgi?db=${db}&term=${term}[${field}]&mindate=${minDate}&maxdate=${maxDate}&retmode=json&retmax=250`
+    );
+    return result.data.esearchresult.idlist;
+  } catch (error) {
+    logger.error("Error:", error);
+  }
+};
+
+const getSummariesByUID = async (db, uids) => {
     try {
-        const result = await axios.get(`${baseURL}einfo.fcgi?db=${db}&retmode=json`);
-        return result.data.einforesult.dbinfo[0];
-    }
-    catch (error) {
+        const result = await axios.get(
+          `${baseURL}esummary.fcgi?db=${db}&id=${uids}&retmode=json`
+        );
+        logger.info(`${baseURL}esummary.fcgi?db=${db}&id=${uids}&retmode=json`)
+        return Object.values(result.data.result)
+      } catch (error) {
         logger.error("Error:", error);
-    }
+      }
 }
 
-const dbSearch = async (db, term, retmax = 20, minDate = 1900, maxDate = null, field = "all") => {
-    if (maxDate === null || maxDate > new Date().getFullYear() || maxDate < 1 || maxDate < minDate) maxDate = new Date().getFullYear();
-    if (retmax > 10000 || retmax < 0) retmax = 10000;
-    if (minDate < 1 || minDate > maxDate || minDate > new Date().getFullYear()) minDate = 1900;
+const getFullRecordsByUID = async (db, uids) => {
     try {
-        const result = await axios.get(`${baseURL}esearch.fcgi?db=${db}&term=${term}[${field}]&retmax=${retmax}&mindate=${minDate}&maxdate=${maxDate}&retmode=json`);
-        return result.data.esearchresult;
-    }
-    catch (error) {
+        const result = await axios.get(
+          `${baseURL}efetch.fcgi?db=${db}&id=${uids}&retmode=xml`
+        );
+        const jsonObject = xml2js(result.data);
+        let pubmedArticles = jsonObject.elements[1].elements
+        pubmedArticles = pubmedArticles.map(a => a.elements[0].elements[2].elements)
+        pubmedArticles = pubmedArticles.filter(a => a.some(object => object["name"] === "Journal") && a.some(object => object["name"] === "Abstract"))
+        pubmedArticles = pubmedArticles.map(a => {
+            const pubDate = a[0].elements[1].elements.filter(element => element.name === "PubDate")[0].elements
+            const title = a[0].elements.filter(element => element.name === "Title")[0].elements
+            const articleTitle = a.filter(element => element.name === "ArticleTitle")[0].elements
+            const abstract = a.filter(element => element.name === "Abstract")[0].elements
+            const authorList = a.filter(element => element.name === "AuthorList")[0].elements.map(author => author.elements.splice(0, 3))
+
+            return({
+                pubDate,
+                title,
+                articleTitle,
+                abstract,
+                authorList
+            })
+        })
+        
+        return pubmedArticles
+      } catch (error) {
         logger.error("Error:", error);
-    }
+      }
 }
 
 module.exports = {
-    getDbList, getDbInfo, dbSearch
-}
+  getDbList,
+  getDbInfo,
+  dbSearchForUIDsByTerm,
+  getSummariesByUID,
+  getFullRecordsByUID
+};
