@@ -7,7 +7,6 @@ pubmedRouter.get("/:term", async (req, res) => {
   try {
     const uids = await pubmedFunctions.dbSearchForUIDsByTerm(
       term,
-      req.body.retmax,
       req.body.minDate,
       req.body.maxDate,
       req.body.field

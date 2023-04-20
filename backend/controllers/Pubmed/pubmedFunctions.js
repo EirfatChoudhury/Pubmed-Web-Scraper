@@ -7,8 +7,9 @@ const baseURL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
 const dbSearchForUIDsByTerm = async (
   term,
   minDate = 1900,
-  maxDate = null,
+  maxDate = new Date().getFullYear(),
   field = "all"
+
 ) => {
   if (
     maxDate === null ||
@@ -18,8 +19,10 @@ const dbSearchForUIDsByTerm = async (
   )
     maxDate = new Date().getFullYear();
 
-  if (minDate < 1 || minDate > maxDate || minDate > new Date().getFullYear())
+  if (minDate < 1900 || minDate > maxDate || minDate > new Date().getFullYear() || minDate === null)
     minDate = 1900;
+
+  if (field === null || field !== "tiab") field = "all"
 
   try {
     const result = await axios.get(
