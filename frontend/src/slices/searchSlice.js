@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const searchSlice = createSlice({
-    name: "nav",
+    name: "search",
     initialState,
     reducers: {
         setFrom: (state, action) => {
@@ -26,7 +26,7 @@ export const searchSlice = createSlice({
     }
 })
 
-export const { setFrom, setTo, setAdvancedSearch, setTerm } = navSlice.actions;
+export const { setFrom, setTo, setAdvancedSearch, setTerm } = searchSlice.actions;
 
 // Selectors
 export const selectFrom = (state) => state.search.from;
