@@ -1,7 +1,7 @@
 const pubmedRouter = require("express").Router();
 const pubmedFunctions = require("./pubmedFunctions");
 
-pubmedRouter.get("/:term/full-records", async (req, res) => {
+pubmedRouter.get("/:term", async (req, res) => {
   let term = req.params.term;
   term = term.replaceAll("-", "%20");
   try {
@@ -13,9 +13,8 @@ pubmedRouter.get("/:term/full-records", async (req, res) => {
       req.body.field
     );
 
-    const uidsWithAbstracts = await pubmedFunctions.getUIDsOfSummariesWithAbstracts(
-      uids
-    );
+    const uidsWithAbstracts =
+      await pubmedFunctions.getUIDsOfSummariesWithAbstracts(uids);
 
     const results = await pubmedFunctions.getFullRecordsByUID(
       uidsWithAbstracts

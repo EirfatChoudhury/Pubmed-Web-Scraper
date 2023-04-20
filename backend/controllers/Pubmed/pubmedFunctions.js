@@ -1,6 +1,6 @@
 const axios = require("axios");
 const logger = require("../../utils/logger");
-const { xml2js } = require("xml-js")
+const { xml2js } = require("xml-js");
 
 const baseURL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
 
@@ -32,49 +32,64 @@ const dbSearchForUIDsByTerm = async (
 };
 
 const getUIDsOfSummariesWithAbstracts = async (uids) => {
-    try {
-        const result = await axios.get(
-          `${baseURL}esummary.fcgi?db=pubmed&id=${uids}&retmode=json`
-        );
-        return Object.values(result.data.result).pop()
-      } catch (error) {
-        logger.error("Error:", error);
-      }
-}
+  try {
+    const result = await axios.get(
+      `${baseURL}esummary.fcgi?db=pubmed&id=${uids}&retmode=json`
+    );
+    return Object.values(result.data.result).pop();
+  } catch (error) {
+    logger.error("Error:", error);
+  }
+};
 
 const getFullRecordsByUID = async (uids) => {
-    try {
-        const result = await axios.get(
-          `${baseURL}efetch.fcgi?db=pubmed&id=${uids}&retmode=xml`
-        );
-        const jsonObject = xml2js(result.data);
-        let pubmedArticles = jsonObject.elements[1].elements
-        pubmedArticles = pubmedArticles.map(a => a.elements[0].elements[2].elements)
-        pubmedArticles = pubmedArticles.filter(a => a.some(object => object["name"] === "Journal") && a.some(object => object["name"] === "Abstract"))
-        pubmedArticles = pubmedArticles.map(a => {
-            const pubDate = a[0].elements[1].elements.filter(element => element.name === "PubDate")[0]
-            const title = a[0].elements.filter(element => element.name === "Title")[0].elements
-            const articleTitle = a.filter(element => element.name === "ArticleTitle")[0].elements
-            const abstract = a.filter(element => element.name === "Abstract")[0].elements
-            const authorList = a.filter(element => element.name === "AuthorList")[0].elements.map(author => author.elements.splice(0, 3))
+  try {
+    const result = await axios.get(
+      `${baseURL}efetch.fcgi?db=pubmed&id=${uids}&retmode=xml`
+    );
+    const jsonObject = xml2js(result.data);
+    let pubmedArticles = jsonObject.elements[1].elements;
+    pubmedArticles = pubmedArticles.map(
+      (a) => a.elements[0].elements[2].elements
+    );
+    pubmedArticles = pubmedArticles.filter(
+      (a) =>
+        a.some((object) => object["name"] === "Journal") &&
+        a.some((object) => object["name"] === "Abstract")
+    );
+    pubmedArticles = pubmedArticles.map((a) => {
+      const pubDate = a[0].elements[1].elements.filter(
+        (element) => element.name === "PubDate"
+      )[0];
+      const title = a[0].elements.filter(
+        (element) => element.name === "Title"
+      )[0].elements;
+      const articleTitle = a.filter(
+        (element) => element.name === "ArticleTitle"
+      )[0].elements;
+      const abstract = a.filter((element) => element.name === "Abstract")[0]
+        .elements;
+      const authorList = a
+        .filter((element) => element.name === "AuthorList")[0]
+        .elements.map((author) => author.elements.splice(0, 3));
 
-            return({
-                pubDate,
-                title,
-                articleTitle,
-                abstract,
-                authorList
-            })
-        })
-        
-        return pubmedArticles
-      } catch (error) {
-        logger.error("Error:", error);
-      }
-}
+      return {
+        pubDate,
+        title,
+        articleTitle,
+        abstract,
+        authorList,
+      };
+    });
+
+    return pubmedArticles;
+  } catch (error) {
+    logger.error("Error:", error);
+  }
+};
 
 module.exports = {
   dbSearchForUIDsByTerm,
   getUIDsOfSummariesWithAbstracts,
-  getFullRecordsByUID
+  getFullRecordsByUID,
 };
