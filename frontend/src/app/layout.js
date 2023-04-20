@@ -1,3 +1,4 @@
+import SearchAppBar from './components/SearchAppBar'
 import './globals.css'
 
 export const metadata = {
@@ -8,7 +9,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+
+      <body>
+        <SearchAppBar />
+
+        <main>
+          {children}
+        </main>
+      </body>
+
     </html>
   )
 }
