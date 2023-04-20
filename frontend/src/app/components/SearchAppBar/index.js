@@ -86,13 +86,14 @@ const SearchAppBar = () => {
           >
             Pubmed Abstract Scraper
           </Typography>
-          <Search onChange={(event) => dispatch(setTerm(event.target.value))}>
+          <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              onChange={(event) => dispatch(setTerm(event.target.value))}
             />
           </Search>
         </Toolbar>
