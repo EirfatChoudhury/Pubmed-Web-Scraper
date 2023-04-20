@@ -1,9 +1,10 @@
 import axios from 'axios'
-const baseURL = '/api/pubmed'
+const baseURL = 'http://localhost:3001/api/pubmed'
 
 const getAll = async ( searchContent ) => {
+    const term = searchContent.term.replaceAll(" ", "+")
     const result = await axios.get(
-        `${baseURL}/${searchContent.term}`, 
+        `${baseURL}/${term}`, 
         { 
             params : {
                 minDate: searchContent.minDate,

@@ -10,7 +10,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from '@/slices/searchSlice';
+import { selectArticles } from '@/slices/articleSlice';
 import { useEffect } from 'react';
+import { postSearch } from '@/slices/articleSlice';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -60,8 +62,25 @@ const SearchAppBar = () => {
   const to = useSelector(selectTo)
   const advancedSearch = useSelector(selectAdvancedSearch)
   const term = useSelector(selectTerm)
+  const articles = useSelector(selectArticles)
 
   useEffect(() => {
+    const STATE = {
+      from,
+      to,
+      advancedSearch,
+      term,
+    }
+
+    console.log("STATE:", STATE)
+    console.log("ARTICLES:", articles)
+  }, [from, to, advancedSearch, term, articles])
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (!term) return
+
     const STATE = {
       from,
       to,
@@ -69,8 +88,8 @@ const SearchAppBar = () => {
       term
     }
 
-    console.log("STATE:", STATE)
-  }, [from, to, advancedSearch, term])
+    dispatch(postSearch(STATE))
+  } 
 
   return (
     <Box sx={{ flexGrow: 1, backgroundColor: 'red' }}>
@@ -86,16 +105,19 @@ const SearchAppBar = () => {
           >
             Pubmed Abstract Scraper
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-              onChange={(event) => dispatch(setTerm(event.target.value))}
-            />
-          </Search>
+          <form onSubmit={handleSubmit}>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={(event) => dispatch(setTerm(event.target.value))}
+                value={term || ''}
+              />
+            </Search>
+          </form>
         </Toolbar>
       </AppBar>
     </Box>
