@@ -8,6 +8,9 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import Sidebar from './Sidebar';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from '@/slices/searchSlice';
+import { useEffect } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -52,6 +55,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const SearchAppBar = () => {
+  const dispatch = useDispatch();
+  const from = useSelector(selectFrom)
+  const to = useSelector(selectTo)
+  const advancedSearch = useSelector(selectAdvancedSearch)
+  const term = useSelector(selectTerm)
+
+  useEffect(() => {
+    const STATE = {
+      from,
+      to,
+      advancedSearch,
+      term
+    }
+
+    console.log("STATE:", STATE)
+  }, [from, to, advancedSearch, term])
+
   return (
     <Box sx={{ flexGrow: 1, backgroundColor: 'red' }}>
       <AppBar position="static" style={{ background: 'darkred', color: 'whitesmoke' }}>
@@ -66,7 +86,7 @@ const SearchAppBar = () => {
           >
             Pubmed Abstract Scraper
           </Typography>
-          <Search>
+          <Search onChange={(event) => dispatch(setTerm(event.target.value))}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     from: null,
     to: null,
-    advancedSearch: null,
+    advancedSearch: false,
     term: null
 };
 
@@ -32,6 +32,6 @@ export const { setFrom, setTo, setAdvancedSearch, setTerm } = searchSlice.action
 export const selectFrom = (state) => state.search.from;
 export const selectTo = (state) => state.search.to;
 export const selectAdvancedSearch = (state) => state.search.advancedSearch;
-export const selectSearch = (state) => state.search.term;
+export const selectTerm = (state) => state.search.term;
 
 export default searchSlice.reducer;

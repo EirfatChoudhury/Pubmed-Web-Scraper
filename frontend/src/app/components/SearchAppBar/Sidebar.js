@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -17,25 +17,22 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFrom, setTo, setAdvancedSearch, selectAdvancedSearch, selectFrom, selectTo, selectTerm } from '@/slices/searchSlice';
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const from = useSelector(selectFrom)
+  const to = useSelector(selectTo)
+  const advancedSearch = useSelector(selectAdvancedSearch)
+
   const [state, setState] = useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
+    left: false
   });
 
-  const LightTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.common.white,
-      color: 'rgba(0, 0, 0, 0.87)',
-      boxShadow: theme.shadows[1],
-      fontSize: 11,
-    },
-  }));
+  const handleChange = (event) => {
+    dispatch(setAdvancedSearch(event.target.checked))
+  };
 
   const toggleDrawer =
     (anchor, open) =>
@@ -50,6 +47,26 @@ const Sidebar = () => {
 
       setState({ ...state, [anchor]: open });
   };
+
+  const resetFilters = () => {
+    dispatch(setFrom(null))
+    dispatch(setTo(null))
+    dispatch(setAdvancedSearch(false))
+
+    toggleDrawer("left", false)
+    setTimeout(() => toggleDrawer("left", true), 5000)
+  }
+
+  const LightTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: 11,
+    },
+  }));
 
   const list = (anchor) => (
     <Box
@@ -73,7 +90,7 @@ const Sidebar = () => {
         <ListItem>
           <ListItemText primary={"From:"} style={{marginRight: 10}}/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker views={['year']} disableFuture/>
+              <DatePicker views={['year']} disableFuture onChange={(event) => dispatch(setFrom(event["$y"]))} value={`"$y": ${from}`}/>
           </LocalizationProvider>
         </ListItem>
         <Divider />
@@ -81,7 +98,7 @@ const Sidebar = () => {
         <ListItem>
           <ListItemText primary={"To:"} style={{marginRight: 10}}/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker views={['year']} disableFuture/>
+              <DatePicker views={['year']} disableFuture onChange={(event) => dispatch(setTo(event["$y"]))} value={`"$y": ${to}`}/>
           </LocalizationProvider>
         </ListItem>
         <Divider />
@@ -91,17 +108,25 @@ const Sidebar = () => {
               <ListItemText primary={"Advanced Search"} style={{marginRight: 10}}/>
             </LightTooltip>
             <LightTooltip title={"Search for a specific phrase in the Title/Abstract"} placement={"bottom-end"}>
-              <Checkbox style={{ color: 'whitesmoke' }}/>
+              <Checkbox
+                checked={advancedSearch}
+                onChange={handleChange}
+                inputProps={{ 'aria-label': 'controlled' }}
+                style={{ color: 'whitesmoke' }}
+              />
             </LightTooltip>
           </ListItem>
           <Divider />
 
         <ListItem>
-          <ListItemButton style={{ borderRight: 'solid', textAlign: 'center', borderColor: '#1c1c1c', borderWidth: 2 }}
-            onClick={toggleDrawer("left", false)}>
+          <ListItemButton style={{ textAlign: 'center' }}
+            onClick={toggleDrawer("left", false)}
+          >
             <ListItemText primary={"Apply Filters"}/>
           </ListItemButton>
-          <ListItemButton style={{ textAlign: 'center' }}>
+          <ListItemButton style={{ textAlign: 'center' }}
+            onClick={resetFilters}
+          >
             <ListItemText primary={"Reset Filters"}/>
           </ListItemButton>
         </ListItem>
