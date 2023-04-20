@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <Provider store={store}>
       <main>
-        <SearchAppBar />
+        <SearchAppBar/>
         <div style={{padding: 30, background: '#B22222', height: '100vh'}}>
           <h1>Search Results</h1>
         </div>

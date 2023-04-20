@@ -13,6 +13,8 @@ import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from 
 import { selectArticles } from '@/slices/articleSlice';
 import { useEffect } from 'react';
 import { postSearch } from '@/slices/articleSlice';
+import { useScrollTrigger } from '@mui/material';
+import Slide from '@mui/material/Slide';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -91,7 +93,22 @@ const SearchAppBar = () => {
     dispatch(postSearch(STATE))
   } 
 
+  function HideOnScroll(props) {
+    const { children, window } = props;
+    const trigger = useScrollTrigger({
+      target: window ? window() : undefined,
+    });
+  
+    return (
+      <Slide appear={false} direction="down" in={!trigger}>
+        {children}
+      </Slide>
+    );
+  }
+  
+
   return (
+    <HideOnScroll>
     <Box sx={{ flexGrow: 1, backgroundColor: 'red' }}>
       <AppBar position="static" style={{ background: 'darkred', color: 'whitesmoke' }}>
         <Toolbar>
@@ -121,6 +138,7 @@ const SearchAppBar = () => {
         </Toolbar>
       </AppBar>
     </Box>
+    </HideOnScroll>
   );
 };
 
