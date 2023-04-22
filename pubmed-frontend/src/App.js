@@ -5,7 +5,7 @@ const App = () => {
   return (
       <div>
         <SearchAppBar />
-        <div style={{padding: 30, background: '#B22222', height: '100vh'}}>
+        <div style={{padding: 30, height: '100vh'}}>
           <div>
             <MainContent />
           </div>

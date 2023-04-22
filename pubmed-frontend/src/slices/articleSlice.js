@@ -13,7 +13,7 @@ export const articleSlice = createSlice({
     }
 })
 
-export const { getArticles} = articleSlice.actions;
+export const { getArticles } = articleSlice.actions;
 
 // Selectors
 export const selectArticles = (state) => state.article
