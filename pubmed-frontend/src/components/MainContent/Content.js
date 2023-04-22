@@ -1,4 +1,5 @@
 import React from 'react'
+import { CheckWord } from 'check-if-word'
 
 const Content = ( {article} ) => {
   let year, month, day
@@ -30,7 +31,7 @@ const Content = ( {article} ) => {
 
   return (
     <div>
-      {year} {month} {day} {title} {articleTitle} {foreName} {lastName} {initials} {abstractTexts.map(text => text.elements ? text.elements[0].text.length > 5 && !text.elements[0].text.includes(" ") ? <p>{text.elements[0].text}</p> : <text>{text.elements[0].text}</text> : <text>{text.text}</text>)}
+      {year} {month} {day} {title} {articleTitle} {foreName} {lastName} {initials} {abstractTexts.map(text => text.elements ? /[:;]$/.test(text.elements[0].text) ? <p>{text.elements[0].text}</p> : <text>{text.elements[0].text}</text> : <text>{text.text}</text>)}
     </div>
   )
 }
