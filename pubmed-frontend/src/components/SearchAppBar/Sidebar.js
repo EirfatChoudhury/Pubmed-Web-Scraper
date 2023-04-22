@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -18,12 +16,10 @@ import Checkbox from '@mui/material/Checkbox';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFrom, setTo, setAdvancedSearch, selectAdvancedSearch, selectFrom, selectTo } from '@/slices/searchSlice';
+import { setFrom, setTo, setAdvancedSearch, selectAdvancedSearch } from '../../slices/searchSlice'
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const from = useSelector(selectFrom)
-  const to = useSelector(selectTo)
   const advancedSearch = useSelector(selectAdvancedSearch)
 
   const [state, setState] = useState({

@@ -1,5 +1,3 @@
-'use client';
-
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -9,10 +7,9 @@ import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from '@/slices/searchSlice';
-import { selectArticles } from '@/slices/articleSlice';
+import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from '../../slices/searchSlice'
+import { selectArticles, postSearch } from '../../slices/articleSlice'
 import { useEffect } from 'react';
-import { postSearch } from '@/slices/articleSlice';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -101,7 +98,7 @@ const SearchAppBar = () => {
             noWrap
             component="a"
             href="/"
-            sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}
+            sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, fontWeight: 400, textDecoration: 'none', color: 'whitesmoke'}}
           >
             Pubmed Abstract Scraper
           </Typography>

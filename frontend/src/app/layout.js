@@ -1,4 +1,3 @@
-import SearchAppBar from './components/SearchAppBar'
 import './globals.css'
 
 export const metadata = {
