@@ -14,20 +14,24 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { setFrom, setTo, setAdvancedSearch, selectAdvancedSearch } from '../../slices/searchSlice'
+import { useDispatch } from 'react-redux';
+import { setFrom, setTo, setAdvancedSearch } from '../../slices/searchSlice'
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const advancedSearch = useSelector(selectAdvancedSearch)
 
   const [state, setState] = useState({
     left: false
   });
+  const [checked, setChecked] = useState(false)
+  const [yearFrom, setYearFrom] = useState(null)
+  const [yearTo, setYearTo] = useState(null)
 
-  const handleChange = (event) => {
-    dispatch(setAdvancedSearch(event.target.checked))
+  const handleCheckChange = (event) => {
+    setChecked(event.target.checked)
   };
 
   const toggleDrawer =
@@ -44,13 +48,26 @@ const Sidebar = () => {
       setState({ ...state, [anchor]: open });
   };
 
+  const applyFilters = async () => {
+    if (yearFrom > yearTo) {
+      document.getElementById('alert').style.display = 'block'
+
+      setTimeout(() => {
+        document.getElementById('alert').style.display = 'none'
+      }, 5000)
+
+      return
+    }
+
+    dispatch(setFrom(yearFrom))
+    dispatch(setTo(yearTo))
+    dispatch(setAdvancedSearch(checked))
+  }
+
   const resetFilters = () => {
     dispatch(setFrom(null))
     dispatch(setTo(null))
     dispatch(setAdvancedSearch(false))
-
-    toggleDrawer("left", false)
-    setTimeout(() => toggleDrawer("left", true), 5000)
   }
 
   const LightTooltip = styled(({ className, ...props }) => (
@@ -86,7 +103,7 @@ const Sidebar = () => {
         <ListItem>
           <ListItemText primary={"From:"} style={{marginRight: 10}}/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker views={['year']} disableFuture onChange={(event) => dispatch(setFrom(event["$y"]))}/>
+              <DatePicker views={['year']} disableFuture onChange={(event) => setYearFrom(event["$y"])}/>
           </LocalizationProvider>
         </ListItem>
         <Divider />
@@ -94,7 +111,7 @@ const Sidebar = () => {
         <ListItem>
           <ListItemText primary={"To:"} style={{marginRight: 10}}/>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker views={['year']} disableFuture onChange={(event) => dispatch(setTo(event["$y"]))}/>
+              <DatePicker views={['year']} disableFuture onChange={(event) => setYearTo(event["$y"])}/>
           </LocalizationProvider>
         </ListItem>
         <Divider />
@@ -105,8 +122,8 @@ const Sidebar = () => {
             </LightTooltip>
             <LightTooltip title={"Search for a specific phrase in the Title/Abstract"} placement={"bottom-end"}>
               <Checkbox
-                checked={advancedSearch}
-                onChange={handleChange}
+                checked={checked}
+                onChange={handleCheckChange}
                 inputProps={{ 'aria-label': 'controlled' }}
                 style={{ color: 'whitesmoke' }}
               />
@@ -116,7 +133,7 @@ const Sidebar = () => {
 
         <ListItem>
           <ListItemButton style={{ textAlign: 'center' }}
-            onClick={toggleDrawer("left", false)}
+            onClick={applyFilters}
           >
             <ListItemText primary={"Apply Filters"}/>
           </ListItemButton>
@@ -127,6 +144,14 @@ const Sidebar = () => {
           </ListItemButton>
         </ListItem>
         <Divider />
+
+        <div id='alert' style={{display: 'none'}}>
+          <Stack sx={{ width: '80%', marginLeft: 'auto', marginRight: 'auto', marginTop: 2.5 }}>
+            <Alert variant="filled" severity="error">
+              Years invalid
+            </Alert>
+          </Stack>
+        </div>
       </List>
     </Box>
   );
