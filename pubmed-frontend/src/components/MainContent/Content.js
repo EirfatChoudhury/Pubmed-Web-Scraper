@@ -56,7 +56,7 @@ const Content = ( {article} ) => {
   return (
     <div style={{borderTop: 'solid', paddingTop: 25, borderWidth: 1}}>
       <div style={{marginLeft: 30, marginRight: 30}}>
-        <a style={{fontWeight: 400, textDecoration: 'none', color: 'whitesmoke'}} href={`https://pubmed.ncbi.nlm.nih.gov/${UID}/`} target='_blank'>
+        <a style={{fontWeight: 400, color: 'whitesmoke'}} href={`https://pubmed.ncbi.nlm.nih.gov/${UID}/`} target='_blank'>
           {articleTitle}
         </a>
       </div>
