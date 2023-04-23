@@ -1,9 +1,32 @@
 import React from 'react'
-import { CheckWord } from 'check-if-word'
+import { styled } from '@mui/material/styles';
+import Collapse from '@mui/material/Collapse';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import IconButton from '@mui/material/IconButton';
+
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
+
 
 const Content = ( {article} ) => {
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  const UID = article.UID
+
   let year, month, day
-  if (article.pubDate.elements.length === 3) {
+  if (article.pubDate.elements.length === 3 || article.pubDate.elements.length > 3) {
     year = article.pubDate.elements[0].elements[0].text
     month = article.pubDate.elements[1].elements[0].text
     day = article.pubDate.elements[2].elements[0].text
@@ -30,8 +53,34 @@ const Content = ( {article} ) => {
   abstractTexts = abstract.find(abstract => abstract.name === "AbstractText").elements
 
   return (
-    <div>
-      {year} {month} {day} {title} {articleTitle} {foreName} {lastName} {initials} {abstractTexts.map(text => text.elements ? /[:;]$/.test(text.elements[0].text) ? <p>{text.elements[0].text}</p> : <text>{text.elements[0].text}</text> : <text>{text.text}</text>)}
+    <div style={{borderTop: 'solid', paddingTop: 25, borderWidth: 1}}>
+      <div style={{marginLeft: 30, marginRight: 30}}>
+        <a style={{fontWeight: 400, textDecoration: 'none', color: 'whitesmoke'}} href='/'>
+          {articleTitle}
+        </a>
+      </div>
+
+      <div style={{fontSize: 20, marginTop: 5, marginLeft: 30, marginRight: 30}}>
+        {title} - {year} {month} {day} - {foreName} {lastName} {initials}
+      </div>
+      
+      <div style={{marginRight: 25}}>
+      <ExpandMore
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+          sx={{marginLeft: '92.5%'}}
+        >
+          <ExpandMoreIcon sx={{color: 'whitesmoke'}}/>
+      </ExpandMore>
+      </div>
+
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <div style={{marginLeft: 30, marginRight: 30}} id='abstract-content'>
+          {abstractTexts.map(text => text.elements ? /[:;]$/.test(text.elements[0].text) ? <p>{text.elements[0].text}</p> : <text>{text.elements[0].text}</text> : <text>{text.text}</text>)}
+        </div>
+      </Collapse>
     </div>
   )
 }

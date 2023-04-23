@@ -47,45 +47,42 @@ const getUIDsOfSummariesWithAbstracts = async (uids) => {
 
 const getFullRecordsByUID = async (uids) => {
   try {
+    if (!uids) return { result: "NO RESULTS" }
+
     const result = await axios.get(
       `${baseURL}efetch.fcgi?db=pubmed&id=${uids}&retmode=xml`
     );
-    const jsonObject = xml2js(result.data);
-    let pubmedArticles = jsonObject.elements[1].elements;
-    pubmedArticles = pubmedArticles.map(
-      (a) => a.elements[0].elements[2].elements
-    );
-    pubmedArticles = pubmedArticles.filter(
-      (a) =>
-        a.some((object) => object["name"] === "Journal") &&
-        a.some((object) => object["name"] === "Abstract")
-    );
-    pubmedArticles = pubmedArticles.map((a) => {
-      const pubDate = a[0].elements[1].elements.filter(
-        (element) => element.name === "PubDate"
-      )[0];
-      const title = a[0].elements.filter(
-        (element) => element.name === "Title"
-      )[0].elements;
-      const articleTitle = a.filter(
-        (element) => element.name === "ArticleTitle"
-      )[0].elements;
-      const abstract = a.filter((element) => element.name === "Abstract")[0]
-        .elements;
-      const authorList = a
-        .filter((element) => element.name === "AuthorList")[0]
-        .elements.map((author) => author.elements.splice(0, 3));
+    let allArticles = xml2js(result.data);
+    allArticles = allArticles.elements.filter(element => element.name === "PubmedArticleSet")[0].elements // Filtering for Pubmed Article Sets
+    allArticles = allArticles.map(article => article.elements)
+    allArticles = allArticles.filter(article => article.some(element => element.name === "MedlineCitation")) // Checking to see if Medline Citations exist within each article
+    allArticles = allArticles.map(article => article.filter(element => element.name === "MedlineCitation")[0].elements) // Filtering for articles with Medline Citations
+    allArticles = allArticles.filter(article => article.filter(element => element.name === "Article")[0].elements.some(element => element.name === "Abstract")) // Checking and filtering for articles with Abstracts
+    
+    // Fetching data needed
+    allArticles = allArticles.map(article => {
+      const UID = article.filter(element => element.name === "PMID")[0].elements[0].text
+      const everythingElse = article.filter(element => element.name === "Article")[0].elements
+      const pubDate = everythingElse.filter(element => element.name === "Journal")[0].elements.filter(element => element.name === "JournalIssue")[0].elements.filter(element => element.name === "PubDate")[0]
+      const title = everythingElse.filter(element => element.name === "Journal")[0].elements.filter(element => element.name === "Title")[0].elements
+      const articleTitle = everythingElse.filter(element => element.name === "ArticleTitle")[0].elements
+      const abstract = everythingElse.filter(element => element.name === "Abstract")[0].elements.filter(element => element.name === "AbstractText")
+      const authorList = everythingElse.filter(element => element.name === "AuthorList")[0].elements.map(element => element.elements)
 
       return {
+        UID,
         pubDate,
         title,
         articleTitle,
         abstract,
-        authorList,
-      };
-    });
+        authorList
+      }
+    })
 
-    return pubmedArticles;
+    const temp = allArticles 
+    logger.info(temp)
+
+    return allArticles
   } catch (error) {
     logger.error("Error:", error);
   }
