@@ -117,10 +117,10 @@ const Sidebar = () => {
         <Divider />
 
           <ListItem>
-            <LightTooltip title={"Search for a specific phrase in the Title/Abstract"} placement={"bottom-end"}>
+            <LightTooltip title={"Search for only the most relevant results"} placement={"bottom-end"}>
               <ListItemText primary={"Advanced Search"} style={{marginRight: 10}}/>
             </LightTooltip>
-            <LightTooltip title={"Search for a specific phrase in the Title/Abstract"} placement={"bottom-end"}>
+            <LightTooltip title={"Search for only the most relevant results"} placement={"bottom-end"}>
               <Checkbox
                 checked={checked}
                 onChange={handleCheckChange}
