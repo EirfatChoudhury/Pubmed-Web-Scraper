@@ -28,6 +28,7 @@ const dbSearchForUIDsByTerm = async (
     const result = await axios.get(
       `${baseURL}esearch.fcgi?db=pubmed&term=${term}[${field}]&mindate=${minDate}&maxdate=${maxDate}&retmode=json&retmax=250`
     );
+
     return result.data.esearchresult.idlist;
   } catch (error) {
     logger.error("Error:", error);
@@ -47,7 +48,7 @@ const getUIDsOfSummariesWithAbstracts = async (uids) => {
 
 const getFullRecordsByUID = async (uids) => {
   try {
-    if (!uids) return { result: "NO RESULTS" }
+    if (!uids) return [{result: "NO RESULTS"}]
 
     const result = await axios.get(
       `${baseURL}efetch.fcgi?db=pubmed&id=${uids}&retmode=xml`
@@ -67,7 +68,7 @@ const getFullRecordsByUID = async (uids) => {
       const title = everythingElse.filter(element => element.name === "Journal")[0].elements.filter(element => element.name === "Title")[0].elements
       const articleTitle = everythingElse.filter(element => element.name === "ArticleTitle")[0].elements
       const abstract = everythingElse.filter(element => element.name === "Abstract")[0].elements.filter(element => element.name === "AbstractText")
-      const authorList = everythingElse.filter(element => element.name === "AuthorList")[0].elements.map(element => element.elements)
+      const authorList = everythingElse.filter(element => element.name === "AuthorList")[0].elements.filter(element => element.name === "Author")[0].elements
 
       return {
         UID,
@@ -78,9 +79,6 @@ const getFullRecordsByUID = async (uids) => {
         authorList
       }
     })
-
-    const temp = allArticles 
-    logger.info(temp)
 
     return allArticles
   } catch (error) {

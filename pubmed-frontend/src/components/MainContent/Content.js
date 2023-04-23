@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import React from 'react'
 import { styled } from '@mui/material/styles';
 import Collapse from '@mui/material/Collapse';
@@ -23,6 +24,8 @@ const Content = ( {article} ) => {
     setExpanded(!expanded);
   };
 
+  if (!article.UID) return <p>{article.result} - TRY AGAIN</p>
+
   const UID = article.UID
 
   let year, month, day
@@ -44,9 +47,9 @@ const Content = ( {article} ) => {
 
   const authorsList = article.authorList
   let lastName, foreName, initials
-  if (authorsList.find(authorList => authorList.some(type => type.name === "LastName"))) lastName = authorsList.find(authorList => authorList.find(type => type.name === "LastName")).find(author => author.name === "LastName").elements[0].text
-  if (authorsList.find(authorList => authorList.some(type => type.name === "ForeName"))) foreName = authorsList.find(authorList => authorList.find(type => type.name === "ForeName")).find(author => author.name === "ForeName").elements[0].text
-  if (authorsList.find(authorList => authorList.some(type => type.name === "Initials"))) initials = authorsList.find(authorList => authorList.find(type => type.name === "Initials")).find(author => author.name === "Initials").elements[0].text
+  if (authorsList.some(type => type.name === "ForeName")) foreName = authorsList.find(author => author.name === "ForeName").elements[0].text
+  if (authorsList.some(type => type.name === "Initials")) initials = authorsList.find(author => author.name === "Initials").elements[0].text
+  if (authorsList.some(type => type.name === "LastName")) lastName = authorsList.find(author => author.name === "LastName").elements[0].text
 
   const abstract = article.abstract
   let abstractTexts
@@ -55,7 +58,7 @@ const Content = ( {article} ) => {
   return (
     <div style={{borderTop: 'solid', paddingTop: 25, borderWidth: 1}}>
       <div style={{marginLeft: 30, marginRight: 30}}>
-        <a style={{fontWeight: 400, textDecoration: 'none', color: 'whitesmoke'}} href='/'>
+        <a style={{fontWeight: 400, textDecoration: 'none', color: 'whitesmoke'}} href={`https://pubmed.ncbi.nlm.nih.gov/${UID}/`} target='_blank'>
           {articleTitle}
         </a>
       </div>

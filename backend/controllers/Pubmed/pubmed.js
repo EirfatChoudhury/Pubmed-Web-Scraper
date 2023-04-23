@@ -1,5 +1,6 @@
 const pubmedRouter = require("express").Router();
 const pubmedFunctions = require("./pubmedFunctions");
+const logger = require("../../utils/logger");
 
 pubmedRouter.get("/:term", async (req, res) => {
   let term = req.params.term;
@@ -7,9 +8,9 @@ pubmedRouter.get("/:term", async (req, res) => {
   try {
     const uids = await pubmedFunctions.dbSearchForUIDsByTerm(
       term,
-      req.body.minDate,
-      req.body.maxDate,
-      req.body.field
+      req.query.minDate,
+      req.query.maxDate,
+      req.query.field
     );
 
     const uidsWithAbstracts =
