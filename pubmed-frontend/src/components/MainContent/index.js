@@ -12,7 +12,7 @@ const MainContent = () => {
 
   return (
     <div>
-      <p style={{margin: 0}}>Search Results --- From: {from ? from : 1900} - To: {to? to : new Date().getFullYear()} {articles.length > 1 ? `(${articles.length} resulsts)` : null}</p>
+      <p style={{margin: 0}}>Search Results --- From: {from ? from : 1900} - To: {to? to : new Date().getFullYear()} {articles.length > 1 ? `(${articles.length} results)` : null}</p>
       
       { 
         articles.map(article => 
