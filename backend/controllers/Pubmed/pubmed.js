@@ -4,7 +4,6 @@ const logger = require("../../utils/logger");
 
 pubmedRouter.get("/:term", async (req, res) => {
   let term = req.params.term;
-  term = term.replaceAll("-", "%20");
   try {
     const uids = await pubmedFunctions.dbSearchForUIDsByTerm(
       term,
