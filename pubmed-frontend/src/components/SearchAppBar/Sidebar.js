@@ -145,6 +145,14 @@ const Sidebar = () => {
         </ListItem>
         <Divider />
 
+        <ListItem>
+          <ListItemButton style={{ textAlign: 'center' }}
+            onClick={toggleDrawer('left', false)}
+          >
+            <ListItemText primary={"Close"}/>
+          </ListItemButton>
+        </ListItem>
+
         <div id='alert' style={{display: 'none'}}>
           <Stack sx={{ width: '80%', marginLeft: 'auto', marginRight: 'auto', marginTop: 2.5 }}>
             <Alert variant="filled" severity="error">
