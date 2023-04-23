@@ -52,8 +52,7 @@ const Content = ( {article} ) => {
   if (authorsList.some(type => type.name === "LastName")) lastName = authorsList.find(author => author.name === "LastName").elements[0].text
 
   const abstract = article.abstract
-  let abstractTexts
-  abstractTexts = abstract.find(abstract => abstract.name === "AbstractText").elements
+  console.log(abstract)
 
   return (
     <div style={{borderTop: 'solid', paddingTop: 25, borderWidth: 1}}>
@@ -81,7 +80,28 @@ const Content = ( {article} ) => {
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <div style={{marginLeft: 30, marginRight: 30}} id='abstract-content'>
-          {abstractTexts.map(text => text.elements ? /[:;]$/.test(text.elements[0].text) ? <p>{text.elements[0].text}</p> : <text>{text.elements[0].text}</text> : <text>{text.text}</text>)}
+          {abstract.map(part => {
+            let attributes
+            let abstractText
+            if (part.attributes) {
+              attributes = part.attributes.Label
+              abstractText = part.elements[0].text
+
+              return(
+                <div>
+                  <p>{attributes}</p>
+                  <p>{abstractText}</p>
+                </div>
+              )
+            }
+
+            abstractText = part.elements.map(element => element.text)
+            return(
+              <div>
+                {abstractText.map(text => <text>{text}</text>)}
+              </div>
+            )
+          })}
         </div>
       </Collapse>
     </div>
