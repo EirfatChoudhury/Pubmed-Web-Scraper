@@ -24,7 +24,7 @@ const Content = ( {article} ) => {
     setExpanded(!expanded);
   };
 
-  if (!article.UID) return <p>{article.result} - TRY AGAIN</p>
+  if (!article.UID) return <p>{article.result}</p>
 
   const UID = article.UID
 
@@ -52,7 +52,6 @@ const Content = ( {article} ) => {
   if (authorsList.some(type => type.name === "LastName")) lastName = authorsList.find(author => author.name === "LastName").elements[0].text
 
   const abstract = article.abstract
-  console.log(abstract)
 
   return (
     <div style={{borderTop: 'solid', paddingTop: 25, borderWidth: 1}}>
@@ -88,17 +87,17 @@ const Content = ( {article} ) => {
               abstractText = part.elements[0].text
 
               return(
-                <div>
-                  <p>{attributes}</p>
-                  <p>{abstractText}</p>
+                <div key={Math.floor(Math.random() * 100000000000000)}>
+                  <p key={Math.floor(Math.random() * 100000000000000)}>{attributes}</p>
+                  <p key={Math.floor(Math.random() * 100000000000000)}>{abstractText}</p>
                 </div>
               )
             }
 
             abstractText = part.elements.map(element => element.text)
             return(
-              <div>
-                {abstractText.map(text => <text>{text}</text>)}
+              <div key={Math.floor(Math.random() * 100000000000000)}>
+                {abstractText.map(text => <text key={Math.floor(Math.random() * 100000000000000)}>{text}</text>)}
               </div>
             )
           })}

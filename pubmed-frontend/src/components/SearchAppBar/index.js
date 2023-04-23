@@ -8,8 +8,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from '../../slices/searchSlice'
-import { selectArticles, postSearch } from '../../slices/articleSlice'
-import { useEffect } from 'react';
+import { /*selectArticles,*/ postSearch, emptySearch } from '../../slices/articleSlice'
+//import { useEffect } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -59,9 +59,9 @@ const SearchAppBar = () => {
   const to = useSelector(selectTo)
   const advancedSearch = useSelector(selectAdvancedSearch)
   const term = useSelector(selectTerm)
-  const articles = useSelector(selectArticles)
+  //const articles = useSelector(selectArticles)
 
-  useEffect(() => {
+  /* useEffect(() => {
     const STATE = {
       from,
       to,
@@ -71,7 +71,7 @@ const SearchAppBar = () => {
 
     console.log("STATE:", STATE)
     console.log("ARTICLES:", articles)
-  }, [from, to, advancedSearch, term, articles])
+  }, [from, to, advancedSearch, term, articles]) */
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -85,6 +85,7 @@ const SearchAppBar = () => {
       term
     }
 
+    dispatch(emptySearch())
     dispatch(postSearch(STATE))
   } 
 
