@@ -1,32 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    from: null,
-    to: null,
-    advancedSearch: false,
-    term: null
+  from: null,
+  to: null,
+  advancedSearch: false,
+  term: null,
 };
 
 export const searchSlice = createSlice({
-    name: "search",
-    initialState,
-    reducers: {
-        setFrom: (state, action) => {
-            state.from = action.payload
-        },
-        setTo: (state, action) => {
-            state.to = action.payload
-        },
-        setAdvancedSearch: (state, action) => {
-            state.advancedSearch = action.payload
-        },
-        setTerm: (state, action) => {
-            state.term = action.payload
-        },
-    }
-})
+  name: "search",
+  initialState,
+  reducers: {
+    setFrom: (state, action) => {
+      state.from = action.payload;
+    },
+    setTo: (state, action) => {
+      state.to = action.payload;
+    },
+    setAdvancedSearch: (state, action) => {
+      state.advancedSearch = action.payload;
+    },
+    setTerm: (state, action) => {
+      state.term = action.payload;
+    },
+  },
+});
 
-export const { setFrom, setTo, setAdvancedSearch, setTerm } = searchSlice.actions;
+export const { setFrom, setTo, setAdvancedSearch, setTerm } =
+  searchSlice.actions;
 
 // Selectors
 export const selectFrom = (state) => state.search.from;

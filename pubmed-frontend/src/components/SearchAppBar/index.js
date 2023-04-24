@@ -1,53 +1,62 @@
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
-import Sidebar from './Sidebar';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAdvancedSearch, selectFrom, selectTo, selectTerm, setTerm } from '../../slices/searchSlice'
-import { /*selectArticles,*/ postSearch, emptySearch } from '../../slices/articleSlice'
+import { styled, alpha } from "@mui/material/styles";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
+import Sidebar from "./Sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectAdvancedSearch,
+  selectFrom,
+  selectTo,
+  selectTerm,
+  setTerm,
+} from "../../slices/searchSlice";
+import {
+  /*selectArticles,*/ postSearch,
+  emptySearch,
+} from "../../slices/articleSlice";
 //import { useEffect } from 'react';
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
+  "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(1),
-    width: 'auto',
+    width: "auto",
   },
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
+  color: "inherit",
+  "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '8ch',
-      '&:focus': {
-        width: '50ch',
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "8ch",
+      "&:focus": {
+        width: "50ch",
       },
     },
   },
@@ -55,10 +64,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const SearchAppBar = () => {
   const dispatch = useDispatch();
-  const from = useSelector(selectFrom)
-  const to = useSelector(selectTo)
-  const advancedSearch = useSelector(selectAdvancedSearch)
-  const term = useSelector(selectTerm)
+  const from = useSelector(selectFrom);
+  const to = useSelector(selectTo);
+  const advancedSearch = useSelector(selectAdvancedSearch);
+  const term = useSelector(selectTerm);
   //const articles = useSelector(selectArticles)
 
   /* useEffect(() => {
@@ -74,24 +83,27 @@ const SearchAppBar = () => {
   }, [from, to, advancedSearch, term, articles]) */
 
   const handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    if (!term) return
+    if (!term) return;
 
     const STATE = {
       from,
       to,
       advancedSearch,
-      term
-    }
+      term,
+    };
 
-    dispatch(emptySearch())
-    dispatch(postSearch(STATE))
-  } 
+    dispatch(emptySearch());
+    dispatch(postSearch(STATE));
+  };
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: 'red' }}>
-      <AppBar position="static" style={{ background: 'darkred', color: 'whitesmoke' }}>
+    <Box sx={{ flexGrow: 1, backgroundColor: "red" }}>
+      <AppBar
+        position="static"
+        style={{ background: "darkred", color: "whitesmoke" }}
+      >
         <Toolbar>
           <Sidebar />
           <Typography
@@ -99,7 +111,13 @@ const SearchAppBar = () => {
             noWrap
             component="a"
             href="/"
-            sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, fontWeight: 400, textDecoration: 'none', color: 'whitesmoke'}}
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              fontWeight: 400,
+              textDecoration: "none",
+              color: "whitesmoke",
+            }}
           >
             Pubmed Abstract Scraper
           </Typography>
@@ -110,9 +128,9 @@ const SearchAppBar = () => {
               </SearchIconWrapper>
               <StyledInputBase
                 placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
                 onChange={(event) => dispatch(setTerm(event.target.value))}
-                value={term || ''}
+                value={term || ""}
               />
             </Search>
           </form>
@@ -122,4 +140,4 @@ const SearchAppBar = () => {
   );
 };
 
-export default SearchAppBar
+export default SearchAppBar;
